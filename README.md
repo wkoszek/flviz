@@ -13,4 +13,12 @@ Checked-in stuff should be enough to run it on Windows XP, but
 you're on your own there. It was run and tested only for the
 purposes of that class. I haven't touched it ever since.
 
+You'll need:
+- Windows
+- Qt Creator
+- GCC (installation as a part of Qt)
+
+All libraries were packaged, since it was getting deployed in
+the lab.
+
 -- Wojciech A. Koszek
