@@ -1,4 +1,4 @@
-FLVIZ - DFA simulator written for my "Formal languages" class
+FLVIZ - DFA simulator
 =============================================================
 
 My "Formal languages" class provided the universal input file
