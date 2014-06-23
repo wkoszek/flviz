@@ -1,0 +1,27 @@
+5 3 2
+
+<tablica wejsciowa ASD>
+0 1 e
+1 f f 2
+2 3 f f
+3 f f 2
+4 f 5 f
+5 f f f
+
+<tablica stanow koncowych>
+3 4
+
+
+hej to jest plik wejsciowy
+pierwsza linia to: 5 liczba stanow, 3 liczba liter w alfabecie, 2
+liczba stanow koncowych
+slowo kluczowe <tablica wejsciowa ASD> dla automatu ASD
+slowo kluczowe <tablica wejsciowa ASN> dla automatu ASN
+pierwsza linia po slowie kluczowym: litery alfabetu
+kolejne: id_stanu przejscia_dla_kolejnych_liter_alfabetu
+
+slowo kluczowe <tablica stanow koncowych>
+identyfikatory stanow oddzielone spacjami
+
+f to fi - stan pusty
+stany indeksujemy od zera

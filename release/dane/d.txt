@@ -1,0 +1,4 @@
+make -f Makefile.Debug
+make[1]: Entering directory `C:/Documents and Settings/wk/Desktop/p4'
+g++ -enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc -mthreads -Wl -Wl,-subsystem,windows -o debug\p4.exe debug/main.o debug/mainwindow.o debug/strsep.o debug/strlcpy.o debug/strlcat.o debug/strdup.o debug/FLViz.o debug/moc_mainwindow.o  -L"c:\Qt\2009.02\qt\lib" -lmingw32 -lqtmaind -lgraph -lgvc -L. -lQtSvgd4 -lQtXmld4 -lQtGuid4 -lQtCored4
+make[1]: Leaving directory `C:/Documents and Settings/wk/Desktop/p4'

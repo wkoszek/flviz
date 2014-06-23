@@ -1,0 +1,12 @@
+5 2 1
+
+<tablica wejsciowa ASD>
+1 0
+B B D
+C D F
+D E F
+E E F
+F f f
+
+<tablica stanow koncowych>
+6
