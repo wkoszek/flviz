@@ -1,2 +1,4 @@
 before_build:
 - cmd: ECHO this is batch
+script:
+- qmake
