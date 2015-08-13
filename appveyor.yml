@@ -3,6 +3,6 @@ init:
 before_build:
 - cmd: ECHO this is batch
 build_script:
-- qmake
+- c:\qt\5.5\mingw492_32\bin\qmake.exe
 on_finish:
 - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
