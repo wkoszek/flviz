@@ -1,0 +1,2 @@
+before_build:
+- cmd: ECHO this is batch
