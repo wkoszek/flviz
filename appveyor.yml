@@ -3,6 +3,7 @@ init:
 before_build:
 - cmd: ECHO this is batch
 build_script:
-- c:\qt\5.5\mingw492_32\bin\qmake.exe
+- c:\qt\5.5\mingw492_32\bin\qmake.exe -make -win32 FLViz.pro
+- c:\qt\5.5\mingw492_32\bin\qmake.exe -project -win32 FLViz.pro
 on_finish:
 - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
