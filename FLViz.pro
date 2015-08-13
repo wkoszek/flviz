@@ -21,5 +21,5 @@ FORMS += mainwindow.ui
 # DEFINES += D -Iwiz\include\graphviz\
 LIBS += -lgraph \
     -lgvc
-LIBS += -L"." -L"lib\"
+LIBS += -L"." -L"lib"
 INCPATH += wiz\include\graphviz
