@@ -6,6 +6,6 @@ before_build:
 - SET PATH=C:\Qt\Tools\mingw492_32\bin;%PATH%
 build_script:
 - qmake.exe -makefile -win32 FLViz.pro
-- make.exe
+- mingw32-make.exe
 on_finish:
 - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
