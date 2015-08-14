@@ -23,3 +23,4 @@ LIBS += -lgraph \
     -lgvc
 LIBS += -L"." -L"release\lib"
 INCPATH += wiz\include\graphviz
+QMAKE_CXXFLAGS += -Wno-write-string
