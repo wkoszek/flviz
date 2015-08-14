@@ -88,19 +88,19 @@ indexed from 0, which I believe referred to the implementation.
    - 3 letters in the alphabet
    - 2 end states
 
- * Line (3), magic pragmas:
+* Line (3), magic pragmas:
    - `<tablica wejsciowa ASD>` dla automatu ASD
    - `<tablica wejsciowa ASN>` dla automatu ASN
    - **TODO**: I don't remember what these were all about.
 
- * Line (4):
+* Line (4):
    - Alphabet available to this program
 
- * Lines (5--9):
+* Lines (5--9):
    - first column means state name, if I'm not mistaken
    - consecutive columns define transitions if one of the alphabet inputs is
      applied.
    - **TODO**: example needed. Must confirm.
 
- * Line (11), magic pragma:
+* Line (11), magic pragma:
    - List of end states.
