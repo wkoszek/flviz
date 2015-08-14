@@ -1,8 +1,9 @@
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include "mainwindow.h"
 
 #include "FLViz.h"
