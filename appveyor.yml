@@ -2,9 +2,9 @@ init:
 - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 before_build:
 - cmd: ECHO this is batch
+build_script:
 - SET PATH=C:\Qt\5.5\mingw492_32\bin;%PATH%
 - SET PATH=C:\Qt\Tools\mingw492_32\bin;%PATH%
-build_script:
 - qmake.exe -makefile -win32 FLViz.pro
 - mingw32-make.exe
 on_finish:
