@@ -4,4 +4,4 @@ qmake.exe -makefile -win32 FLViz.pro
 mingw32-make.exe clean
 mingw32-make.exe mocclean
 mingw32-make.exe
-mingw32-make.exe distclean
+REM mingw32-make.exe distclean
