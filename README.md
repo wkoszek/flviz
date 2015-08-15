@@ -8,6 +8,8 @@ which reads a configuration file, and based on its content creates a
 visualization of a state machine (graph), and lets you apply a stimulus
 (vocabulary) and see the state transitions happen dynamically.
 
+<img width="70%" src="img/flviz_screenshot.jpg">
+
 # Introduction
 
 It was originally written in 2009 during my "Formal Languages" class which
