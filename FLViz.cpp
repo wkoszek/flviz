@@ -1,6 +1,6 @@
 /*
- * FLViz v2009.06.21
- * Copyright (c) 2009 Wojciech A. Koszek <wkoszek@FreeBSD.czest.pl>
+ * FLViz v2015.08.14
+ * Copyright (c) 2009-2015 Wojciech A. Koszek <wojciech@koszek.com>
  *
  * Przedstawiony ni¿ej format danych nie jest wymy¶lony przeze mnie.
  * Akceptujê fakt, ¿e kolega wymy¶li³ go na szybko w celu stworzenia

@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(ui->buttonExit, SIGNAL(clicked()), this, SLOT(close()));
         connect(ui->buttonRestart, SIGNAL(clicked()), this, SLOT(buttonRESTART()));
         ui->buttonRestart->setVisible(false);
-        setWindowTitle(tr("FLViz 2009.06.23 (c) Wojciech A. Koszek <wkoszek@FreeBSD.czest.pl"));
+        setWindowTitle(tr("FLViz 2015.08.14 (c) Wojciech A. Koszek <wojciech@koszek.com>"));
 }
 
 /*
