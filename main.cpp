@@ -15,22 +15,22 @@
 /* Debugging */
 extern int flag_D;
 
-/* Tutaj spodziewamy siê komunikatów o b³êdach */
+/* Here we expect error messages to show up */
 extern const char *errmsg[];
 
-/* Jak u¿ywaæ tego programu */
+/* How to use this program */
 static void 
 usage(const char *prog)
 {
 
 	fprintf(stderr, "%s [-d] [-D] [-h] [-s] [-o <file>] [-v] [-g] <file>\n", prog);
-	fprintf(stderr, "-d\twyrzuæ format zrenderowany\n");
-	fprintf(stderr, "-D\tw³¹cz debugging\n");
-	fprintf(stderr, "-h\thelp (pomoc)\n");
-	fprintf(stderr, "-s\ttryb symulacji\n");
-	fprintf(stderr, "-o <file>\tustaw plik wyjœciowy\n");
-	fprintf(stderr, "-v\tszczegó³owe wypisywanie komunikatów\n");
-	fprintf(stderr, "-g\tnie uruchamiaj interfejsu graficznego\n");
+	fprintf(stderr, "-d\toutput rendered format\n");
+	fprintf(stderr, "-D\tenable debugging\n");
+	fprintf(stderr, "-h\thelp\n");
+	fprintf(stderr, "-s\tsymulation mode\n");
+	fprintf(stderr, "-o <file>\tset output file\n");
+	fprintf(stderr, "-v\tverbose output\n");
+	fprintf(stderr, "-g\tdon't start GUI\n");
 	exit(EX_USAGE);
 }
 
@@ -87,7 +87,6 @@ main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
-	/* Podanie g udpala interfejs tekstowy */
 	if (!flag_g) {
 		a = new QApplication(argc, argv);
 		MainWindow w;
@@ -100,9 +99,8 @@ main(int argc, char **argv)
 		usage(prog);
 
 	/* 
-	 * To samo co w graficznym interfejsie.
-	 * Tworzymy graf i w zale¿noœci od trybu, wyrzucamy
-	 * go w dogodnej formie
+	 * Same as in GUI: make a graph and depending on the mode, we
+	 * S generate it in the convenient form.
 	 */
 	in_fn = argv[0];
 	fp = fopen(in_fn, "r");
@@ -118,7 +116,7 @@ main(int argc, char **argv)
 	if (ofname == NULL)
 		ofname = "outfile.FLViz";
 
-	/* Tryb symulacji */
+	/* Simulation mode */
 	if (flag_s) {
 		if (flag_d)
 			FA_dump_dot(fa, ofname);
