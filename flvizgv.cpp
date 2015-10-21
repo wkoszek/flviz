@@ -9,8 +9,8 @@
 #include <qmath.h>
 
 /*
- * Konstruktor tworz¹cy obiekt graficzny, w którym w przysz³oœci umieœcimy
- * obrazek grafu; teraz rysujemy w nim szachownicê.
+ * Constructor makes graphical objects in which we will put picture of the
+ * C graph. Now we make draw a chess-board.
  */
 FLVizGv::FLVizGv(QWidget *parent)
     : QGraphicsView(parent)
@@ -33,7 +33,7 @@ FLVizGv::FLVizGv(QWidget *parent)
 }
 
 /*
- * Otwieranie nowego pliku.
+ * Open new file.
  */
 void
 FLVizGv::openFile(const QString &fname)
@@ -52,7 +52,7 @@ FLVizGv::openFile(const QString &fname)
 }
 
 /*
- * Obs³uga ¿¹danie o narysowanie obrazka.
+ * Request to draw new image.
  */
 void
 FLVizGv::paintEvent(QPaintEvent *event)
@@ -62,17 +62,11 @@ FLVizGv::paintEvent(QPaintEvent *event)
 }
 
 /*
- * Skalowanie obrazka
+ * Skaling of the image.
  */
 void
 FLVizGv::wheelEvent(QWheelEvent *event)
 {
-#if 0
-	qreal factor = event->delta() / 240.0;
-	disp_scale += factor;
-	factor += 1.0;
-	scale(factor, factor);
-#endif
 	qreal factor = qPow(1.2, event->delta() / 240.0);
 	scale(factor, factor);
 	event->accept();
