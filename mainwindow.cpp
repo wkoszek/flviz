@@ -12,10 +12,6 @@
 #include "FLViz.h"
 #include "flvizgv.h"
 
-/*
- * G³ówne okienko.
- * Podpinamy przyciski otwórz/zakoñcz
- */
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -28,20 +24,16 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(ui->buttonExit, SIGNAL(clicked()), this, SLOT(close()));
         connect(ui->buttonRestart, SIGNAL(clicked()), this, SLOT(buttonRESTART()));
         ui->buttonRestart->setVisible(false);
-        setWindowTitle(tr("FLViz 2015.08.14 (c) Wojciech A. Koszek <wojciech@koszek.com>"));
+        setWindowTitle(
+	    tr("FLViz 2015.08.14 (c) Wojciech A. Koszek <wojciech@koszek.com>")
+	);
 }
 
-/*
- * Destruktor.
- */
 MainWindow::~MainWindow()
 {
 	delete ui;
 }
 
-/*
- * Klikniêcie na "Otwórz"
- */
 void
 MainWindow::buttonOPEN(void)
 {
@@ -53,43 +45,43 @@ MainWindow::buttonOPEN(void)
 	QPushButton *b = NULL;
 	int i;
 
-	/* Zaczynamy bez wiadomoœci w pasku statusu */
+	/* Start without info in the status bar */
 	statusBar()->showMessage(tr(""));
 
-	/* Nastepnie obs³ugujemy menu dot. wyboru pliku */
+	/* Serve "choose file" menu */
 	curpath = new QString(getcwd(buf, sizeof(buf)));
 	fileName = QFileDialog::getOpenFileName(this, tr("Open SVG File"),
 	*curpath
 	, "FLV files (*.flv *.txt)"
 	);
 
-	/* Je¿eli nie ma nazwy pliku... */
 	if (fileName.isEmpty()) {
-		statusBar()->showMessage(tr("Nie podano nazwy pliku."));
+		statusBar()->showMessage(tr("No file chosen."));
 		return;
 	}
 
 	/*
-	 *  Wczeœniej wykorzystywaliœmy jakiœ automat -- prosimy o zwolnienie
+	 *  If we used FA before, free it.
 	 */
         if (fa != NULL) {
 		FA_free(fa);
                 fa = NULL;
         }
+
 	/*
-	 * Teraz otwieramy plik, no chyba ¿e wyst¹pi³ b³¹d
+	 * Try to open a file now.
 	 */
 	fp = fopen(fileName.toStdString().c_str(), "r");
 	if (fp == NULL)
 		return;
 	/*
-	 * Tworzymy strukturê automatu.
+	 * Make FA
 	 */
 	error = FA_create(&fa, fp);
 	if (error != 0) {
 		/*
-		 * W razie b³êdu tworzymy komunikat, który jest bardzo
-		 * szczegó³owy i wrzucamy go do paska statusu.
+		 * In case of a problem, create a very detailed message and
+		 * I report it in the status bar.
 		 */
 		memset(buf, 0, sizeof(buf));
 		(void)snprintf(buf, sizeof(buf) - 1, "ERROR%d: ", -error);
@@ -101,10 +93,8 @@ MainWindow::buttonOPEN(void)
 	}
 
 	/*
-	 * Nastêpnie w zale¿noœci od tego, ile liter alfabetu mamy, tworzymy
-	 * przyciski dynamicznie. Jednak najpierw upewniamy siê, czy aby jakiœ
-	 * automat przed nami nie istnia³. Je¿eli tak, to zwalniamy stare
-	 * przyciski.
+	 * We make buttons dynamically. If the old FA existed before, we
+	 * W free the buttons.
 	 */
         if (stbuttons != NULL && stbuttons_num != -1) {
 		for (i = 0; i < stbuttons_num; i++) {
@@ -117,15 +107,14 @@ MainWindow::buttonOPEN(void)
 		delete [] stbuttons;
                 stbuttons_num = -1;
 	}
-	/* I teraz re-kreacja */
+	/* Now, re-create */
 	stbuttons_num = fa->nalpha;
 	stbuttons = new QPushButton *[stbuttons_num];
 	for (i = 0; i < stbuttons_num; i++) {
 		b = stbuttons[i] = new QPushButton(ui->centralWidget);
                 b->setText(QString(fa->alpha[i].word));
 		/* 
-		 * Rejestrujemy filtr zdarzeñ, bo wszêdzie korzystamy z
-		 * faChange()
+		 * Register event filter, since we alwaysuse faChange
 		 */
 		b->installEventFilter(this);
 		connect(b, SIGNAL(clicked()), this, SLOT(faChange()));
@@ -146,7 +135,7 @@ MainWindow::buttonRESTART(void)
 }
 
 /*
- * Uaktualniamy okno wyrenderowanym obrazkiem grafu.
+ * Update the window with rendered graph image
  */
 void
 MainWindow::faChange(void)
@@ -165,13 +154,11 @@ MainWindow::faChange(void)
 }
 
 /*
- * To wymaga komentarza..:
- * eventFilter umo¿liwia u¿ycie jednej funkcji jako procedury obs³ugi wielu
- * przycisków -- w czasie rejestracji dynamicznych struktur QPushButton nie
- * jestesmy po prostu w stanie przekazaæ tam za kazdym razem innej funkcji
- * ob³sugi przycisku. St¹d eventFilter filtruje klikniêcia w przycisk,
- * odtwarza, któr¹ literê alfabetu dany przycisk reprezentuje oraz uaktualnia
- * obrazek grafu.
+ * This needs a comment:
+ * eventFilter lets us to use 1 procedure to handle many buttons. At the
+ * time of registering dynamic QPushButton structures we're not able to pass
+ * different fuctions everty time. So this event Filter detects which button
+ * has been clicked.
  */
 bool
 MainWindow::eventFilter(QObject *obj, QEvent *event)
