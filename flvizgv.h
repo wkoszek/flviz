@@ -10,18 +10,11 @@ class QFile;
 class QString;
 QT_END_NAMESPACE
 
-/*
- * Dziedziczymy po QGraphicsView, ¿eby mo¿liwe by³o wykorzystanie 
- * rzeczy typu SVG
- */
 class FLVizGv : public QGraphicsView
 {
 	Q_OBJECT
 
 public:
-	/*
-	 * Metody wyjaœnione w pliku .cpp
-	 */
 	FLVizGv(QWidget *parent = 0);
 	void rescale(void);
 
