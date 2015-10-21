@@ -106,3 +106,7 @@ indexed from 0, which I believe referred to the implementation.
 
 * Line (11), magic pragma:
    - List of end states.
+
+# Examples
+
+There are some example data files in the `dane` folder.
