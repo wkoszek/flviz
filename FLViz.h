@@ -6,14 +6,10 @@
 #define	ERRNUM		2000
 #define	TOK_MAX_LEN	128
 
-/*
- * Komunikaty dot.
- */
 extern const char *errmsg[];
 
 /*
- * Tagi potrzebne do oznaczenia, w którym miejscu formatu plików
- * jeste¶my. To w ogóle nie powinno byæ potrzebne :-(
+ * Tags for the input format. Unfortunately in Polish :-/
  */
 #define	FA_FMT_DFA	"<tablica wejsciowa ASD>"
 #define FA_FMT_NFA	"<tablica wejsciowa ASN>"
@@ -23,17 +19,11 @@ extern const char *errmsg[];
 #define	FA_INSERT_EXT	1
 
 /*
- * Stan automatu.
+ * FA state
  */
 struct FA_State {
 	char *name;
 
-	/*
-	 * Stan mo¿e byæ:
-	 * - pierwszy
-	 * - ostatni (docelowy -- s³owo akceptowane)
-	 * - obecny (potrzebne do pracy symulatora)
-	 */
 #define FA_STATE_FIRST (1 << 0)
 #define FA_STATE_LAST (1 << 1)
 #define FA_STATE_CURR (1 << 2)
@@ -43,16 +33,10 @@ struct FA_State {
 	void *obj;
 };
 
-/*
- * S³owo automatu.
- */
 struct FA_word {
 	char *word;
 };
 
-/*
- * Mo¿liwe typy automatu.
- */
 typedef enum {
 	FA_TYPE_DFA,
 	FA_TYPE_NFA
@@ -60,9 +44,6 @@ typedef enum {
 
 struct tok;
 
-/* 
- * Struktura reprezentuje automat.
- */
 struct FA {
 	unsigned long	_fa_magic;
 #define FA_MAGIC	0x6ba531f0
