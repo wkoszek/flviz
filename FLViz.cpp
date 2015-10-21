@@ -1,108 +1,6 @@
 /*
  * FLViz v2015.08.14
  * Copyright (c) 2009-2015 Wojciech A. Koszek <wojciech@koszek.com>
- *
- * Przedstawiony ni¿ej format danych nie jest wymy¶lony przeze mnie.
- * Akceptujê fakt, ¿e kolega wymy¶li³ go na szybko w celu stworzenia
- * programu, jednak na d³u¿sz± metê uwa¿am, ¿e ów format jest b³êdny.
- * Zrobi³bym to zupe³nie inaczej, ale... Oto format:
- * --
- *
- * 5 3 2
- *
- * <tablica wejsciowa ASD>
- * 0 1 e
- * 1 f f 2
- * 2 3 f f
- * 3 f f 2
- * 4 f 5 f
- * 5 f f f
- * 
- * <tablica stanow koncowych>
- * 3 4
- * 
- * 
- * pierwsza linia to: 5 liczba stanow, 3 liczba liter w alfabecie, 2
- * liczba stanow koncowych
- * slowo kluczowe <tablica wejsciowa ASD> dla automatu ASD
- * slowo kluczowe <tablica wejsciowa ASN> dla automatu ASN
- * pierwsza linia po slowie kluczowym: litery alfabetu
- * kolejne: id_stanu przejscia_dla_kolejnych_liter_alfabetu
- * 
- * slowo kluczowe <tablica stanow koncowych>
- * identyfikatory stanow oddzielone spacjami
- * 
- * f to fi - stan pusty
- * stany indeksujemy od zera
- *
- * --
- * Mój komentarz i opis programu:
- *
- * Pierwsze linia powoduje 3 problemy -- sprawdzenie, czy wszystkie 3
- * warunki s± spe³nione (ilo¶æ stanów, stanów liter w alfabecie, ilo¶æ
- * stanów koñcowych).
- *
- * Nastêpne przysparzaj± ogromnej ilo¶ci problemów :-/
- *
- * Najpierw muszê wczytaæ pierwsz± KOLUMNÊ ¿eby dowiedzieæ siê, jakie s±
- * stany. Dopiero potem muszê zaj±æ siê "rozwi±zaniem" kolumn od 1 wzwy¿
- * ¿eby sprawdziæ, czy stany w umieszczone w tych kolumnach rzeczywi¶cie
- * nale¿± do automatu, czy s± na przyk³ad efektem b³êdnego wpisania
- * pliku wej¶ciowego.
- *
- * Dane wczytujê jak w kompilatorze -- najpierw na listê "generalnych"
- * kawa³ków zwanych tokenami. Jeden token to ci±g znaków w którym nie ma
- * spacji. Spacje/tabulatory s³u¿± jako separatory tokenów.
- * Spacje/tabulatory *nie* pojawiaj± siê w tre¶ci tokenów. Przyk³ad:
- *
- * 1 2 3 wojtek koszek
- *
- * Tokeny to "1", "2", "3", "wojtek", "koszek".
- *
- * Przy pomocy tok_enize(FILE *fp), gdzie fp to wska¼nik na otwarty
- * plik, uzyskujê listê takich tokenów z pliku. Wielko¶æ listy zale¿y od
- * wielko¶ci pliku i ilo¶ci pamiêci RAM w komputerze. Nie ma
- * programowego ograniczenia co do wielko¶ci listy.
- *
- * Pobieram 3 pierwsze warto¶ci do tokenów. Pobieram z nich warto¶ci
- * typu integer (tok_getnum()). Sprawdzam znacznik automatu.
- *
- * Wczytujê znaczniki alfabetu -- najpierw jako tokeny, potem od razu
- * jako s³owa. Mam nalpha liter i ka¿da z nich mo¿e byæ liczb±/ci±giem
- * znaków.
- * 
- * Nastêpnie alokujê pust±, dwuwymiarow± tablicê wska¼ników do tokenów.
- * Ta swojego rodzaju pusta, dwuwymiarowa macierz wskazywaæ mi bêdzie na
- * te kawa³ki tekstu, które opisuj± mi automat.
- * 
- * Uk³adam w³a¶nie co wczytane tokeny w taki sposób, ¿eby odzorowywa³y
- * mi tablicê przej¶c automatu.
- *
- * Sprawdzam znacznik koñca pliku i wczytujê tokeny reprezentuj±ce moje
- * stany koñcowe.
- *
- * Nastêpnie konwertujê tokeny z pierwszej kolumny na w³a¶ciwe struktury
- * stanów automatu oraz zaznaczam, który stan jest pierwszy/ostatni.
- * Zaznaczam, ¿e dla N stanów alokujê N struktur. Nie wiêcej.
- *
- * Na potrzebny symulacji stan pierwszy od razu staje siê stanem
- * obecnym.
- *
- * Nastêpnie przetwarzam resztê kolumn dot. tokenów, tworz±c z nich
- * tablicê przej¶æ "Transition Table" (pole transt struktury FA).
- * transt jest dwuwymiarow± tablic± WSKA¬NIKów, gdzie stan w wierszu R i
- * kolumnie K odpowiada tokenowi z wiersza R i kolumny K wcze¶niej
- * wspomnianej 2 wymiarowej tablicy tokenów.
- *
- * Dla ka¿dego tokena sprawdzam nastêpuj±ce warunki:
- * - je¿eli pole ma warto¶æ "f", wska¼nik w tablicy przej¶æ zyskuje
- *   warto¶æ NULL
- *
- * - je¿eli pole nie zawiera nazwy któregokolwiek stanu z automatu
- *   oznacza to, ¿e wyst±pi³ b³±d i przerywam dalsze przetwarzanie.
- *
- * - je¿eli pole zawiera poprawn± nazwê stanu, to tablica przej¶æ
- *   zaczyna wskazywaæ na ten stan, na który nast±pi³oby przej¶cie.
  */
 
 #include <assert.h>
@@ -129,7 +27,7 @@ const char *errmsg[ERRNUM];
 	((errmsg[__LINE__] = (str)) ? -__LINE__ : -__LINE__)
 
 /*
- * Alokacja automatu.
+ * Allocate the Finite Automata (FA)
  */
 static struct FA *
 FA_alloc(void)
@@ -143,7 +41,7 @@ FA_alloc(void)
 }
 
 /*
- * Destrukcja automatu.
+ * Destruction of FA
  */
 void
 FA_free(struct FA *fa)
@@ -154,18 +52,18 @@ FA_free(struct FA *fa)
 	free(fa);
 }
 
-/* Token wczytany z pliku wej¶ciowego */
+/* Token read from an input file */
 struct tok {
-	/* Token zawiera³by now± liniê */
+	/* Token which had a new line */
 	int nl;
 
-	/* String tokena */
+	/* Token content */
 	char str[TOK_MAX_LEN];
 
-	/* Linia, z której wczytali¶my token */
+	/* Token's line number */
 	int lineno;
 
-	/* Pozycja */
+	/* Position */
 	int pos;
 	TAILQ_ENTRY(tok) next;
 };
@@ -381,17 +279,17 @@ FA_create(struct FA **retfa, FILE *fp)
 
 	nstates = toklist_getnum(tl);
 	if (nstates == NULL)
-		return (RE("Nie mog³em wczytaæ ilo¶ci stanów"));
+		return (RE("Couldn't read number of states"));
 	nalpha = toklist_getnum(tl);
 	if (nalpha == NULL)
-		return (RE("Nie mog³em wczytaæ ilo¶ci liter w alfabecie"));
+		return (RE("Couldn't read number of alphabet letters"));
 	nfinistates = toklist_getnum(tl);
 	if (nfinistates == NULL)
-		return (RE("Nie mog³em wczytaæ ilo¶ci stanów koñcowych"));
+		return (RE("Couldn't read number of end-states"));
 
 	label = toklist_get(tl, 3);
 	if (!streq(label->str, FA_FMT_DFA))
-		return (RE("Brak etykiety pocz±tkowej"));
+		return (RE("Couldn't read starting label"));
 	
 	fa = FA_alloc();
 	fa->type = FA_TYPE_DFA;
@@ -407,66 +305,71 @@ FA_create(struct FA **retfa, FILE *fp)
 	for (i = 0; i < fa->nalpha; i++) {
 		tmptk = toklist_get(tl, 1);
 		if (tmptk == NULL)
-			return (RE("Brak litery alfabetu"));
+			return (RE("Lack of alphabet letter"));
 		fa->alpha[i].word = strdup(tmptk->str);
 	}
 
 	/* Allocate data for states. */
-	fa->states = (struct FA_State *)calloc(sizeof(*fa->states), fa->nstates);
+	fa->states = (struct FA_State *)calloc(sizeof(*fa->states),
+	    							fa->nstates);
 	ASSERT(fa->states);
 
 	/* 
 	 * Final states.
 	 */
-	fa->finitoks = (struct tok **)calloc(sizeof(struct tok *), fa->nfinistates);
+	fa->finitoks = (struct tok **)calloc(sizeof(struct tok *),
+							fa->nfinistates);
 	ASSERT(fa->finitoks);
 
 	fa->toks_rows = fa->nstates;
 	fa->toks_cols = fa->nalpha + 1;
 
-	/* Tokeny */
+	/* Tokens */
 	fa->toks = (struct tok ***)calloc(sizeof(struct tok **), fa->toks_rows);
 	ASSERT(fa->toks != NULL);
 	for (i = 0; i < fa->nstates; i++) {
-		fa->toks[i] = (struct tok **)calloc(sizeof(struct tok *), fa->toks_cols);
+		fa->toks[i] = (struct tok **)calloc(sizeof(struct tok *),
+								fa->toks_cols);
 		ASSERT(fa->toks[i] != NULL);
 	}
 
-	/* Tablica przej¶æ */
-	fa->transt = (struct FA_State ***)calloc(sizeof(struct FA_State **), fa->toks_rows);
+	/* Transition table */
+	fa->transt = (struct FA_State ***)calloc(sizeof(struct FA_State **),
+								fa->toks_rows);
 	ASSERT(fa->transt != NULL);
 	for (i = 0; i < fa->nstates; i++) {
-		fa->transt[i] = (struct FA_State **)calloc(sizeof(struct FA_State *), fa->toks_cols);
+		fa->transt[i] = (struct FA_State **)
+			calloc(sizeof(struct FA_State *), fa->toks_cols);
 		ASSERT(fa->transt[i] != NULL);
 	}
 
-	/* Wczytujê tokeny */
+	/* Read the tokens */
 	for (ri = 0; ri < fa->toks_rows; ri++) {
 		for (ci = 0; ci < fa->toks_cols; ci++) {
 			fa->toks[ri][ci] = toklist_get(tl, 1);
 			if (fa->toks[ri][ci] == NULL)
-				return (RE("Niewystarczaj±ca ilo¶æ danych wej¶ciowych"
-					" prawopodobne uszkodzenie pliku"));
+				return (RE("Not enough input data"
+					" possible input file corruption?"));
 		}
 	}
 
-	/* Wczytujê znacznik stanów koñcowych */
+	/* Read a marker indicating ending states */
 	label = toklist_get(tl, 3);
 	if (label == NULL)
-		return (RE("Brak znacznika stanów koñcowych"));
+		return (RE("Lack of end-state marker"));
 	if (!streq(label->str, FA_FMT_FINAL))
-		return (RE("Znacznik stanów koñcowych nie pasuje do wzorca"));
+		return (RE("End-state marker doesn't match the pattern"));
 
-	/* Wczytujê tokeny stanów koñcowych */
+	/* Read end-state tokens */
 	for (i = 0; i < fa->nfinistates; i++) {
 		fa->finitoks[i] = toklist_get(tl, 1);
 		if (fa->finitoks[i] == NULL)
-			return (RE("Brak niektórych stanów koñcowych"));
+			return (RE("Some end-states are missing"));
 	}
 
 	/* 
-	 * Konwertujê pierwsz± kolumnê z tokenów na ju¿ zaalokowane
-	 * stany. Teraz po prostu zaznaczam który stan jest czym.
+	 * Converts first column from tokens to allocated states. I simply
+	 * mark which state is what.
 	 */
 	for (ri = 0; ri < fa->toks_rows; ri++) {
 		st = &fa->states[ri];
@@ -478,18 +381,17 @@ FA_create(struct FA **retfa, FILE *fp)
 		ASSERT(st->name != NULL);
 
 		/* 
-		 * Plik nie mówi, który ma byæ stanem pierwszym :-(
-		 * Zak³adam, ¿e chodzi o pierwszy stan. Jednocze¶nie,
-		 * tu¿ po wczytaniu, stan pierwszy staje siê stanem
-		 * "obecnym" (potrzebne do symulacji).
+		 * File doesn't tell which must be the first state :-(
+		 * I assumed that we're talking about 1st in the file.
+		 * Additionally right after reading, the 1st state is
+		 * A becoming a "current state" (for simulation)
 		 */
 		if (ri == 0)
 			st->flag |= (FA_STATE_FIRST | FA_STATE_CURR);
 
 		/* 
-		 * Sprawdzam, czy obecnie obs³ugiwany stan znajduje siê
-		 * na li¶cie dot. stanów koñcowych. Je¿eli tak, to
-		 * oznacza, ¿e muszê zaznaczyæ go jako koñcowy.
+		 * Checking whether the state is the end-state. If so, I
+		 * need to tag it as the ending state.
 		 */
 		for (j = 0; j < fa->nfinistates; j++)
 			if (streq(fa->finitoks[j]->str, st->name))
@@ -497,7 +399,7 @@ FA_create(struct FA **retfa, FILE *fp)
 	}
 
 	/*
-	 * W³a¶ciwe rozwiniêcie tabeli przej¶æ 
+	 * Resolving transition table.
 	 */
 	for (ri = 0; ri < fa->toks_rows; ri++) {
 		fa->transt[ri][0] = &fa->states[ri];
@@ -508,23 +410,22 @@ FA_create(struct FA **retfa, FILE *fp)
 			fa->transt[ri][ci] = NULL;
 
 			if (streq(tk->str, "f"))
-				/* Je¿eli pusty to zostaw NULL */
+				/* If empty state, leave NULL */
 				continue;
 
-			/* Spróbuj rozwin±æ go na poprawny stan */
+			/* Try to resolve to a correct state */
 			for (i = 0; i < fa->nstates; i++) {
 				if (streq(fa->states[i].name, tk->str))
 					fa->transt[ri][ci] = &fa->states[i];
 			}
 			if (fa->transt[ri][ci] == NULL)
-				return (RE("Tabela przej¶æ zawiera stan, który"
-				    " nie nale¿y do automatu!; b³±d pliku danych"));
+				return (RE("Transition table has a state"
+				    " which doesn't belong to FA. Bad input file"));
 		}
 	}
 
 	/* 
-	 * Wsparce dla symulatora -- stan 0 oraz zaznaczenie ostatniego
-	 * przej¶cia.
+	 * Support for simulation: 1st state and mark of the last transition
 	 */
 	fa->state0 = (struct FA_State *)calloc(sizeof(*fa->state0), 1);
 	ASSERT(fa->state0 != NULL);
@@ -538,7 +439,7 @@ FA_create(struct FA **retfa, FILE *fp)
 }
 
 /* 
- * Wypisz stan.
+ * Print out state.
  */
 static void
 FA_StatePrint(struct FA_State *st)
@@ -568,14 +469,13 @@ FA_trans(struct FA *fa, int word)
 	int sti;
 
 	FA_ASSERT(fa);
-	/* Operujemy indeksami w tablicy liter alfabetu */
+	/* Use letters of the alphabet as indexes */
 	if (word < 0 && word >= fa->nalpha)
-		return (RE("Z³a litera nie nale¿±ce do alfabetu"));
+		return (RE("Bad letter of the alphabet"));
 
-	/* 
-	 * Szukaj stanu obecnego. sti to nic innego jak numery WIERSZA
-	 * naszej tablicy przej¶æ transt. Ale my na razie szukamy w
-	 * states..
+	/*
+	 * We search for current state. sti is a number of a row in our
+	 * transition table. We search in states for now.
 	 */
 	cur = NULL;
 	for (sti = 0; sti < fa->nstates; sti++) {
@@ -586,27 +486,25 @@ FA_trans(struct FA *fa, int word)
 	}
 	if (cur == NULL)
 		/* Ops.. */
-		return (RE("Straszliwy b³±d implementacji; napisz do autora"));
+		return (RE("Terrible internal error."));
 
-	/* 
-	 * Sprawdzamy, czy aby na pewno wszystko jest w porz±dku z
-	 * wewnêtrznymi strukturami programu -- i-ty element w states to
-	 * i-ty wiersz w tabeli przej¶æ. Dodatkowo, pierwszy stan w
-	 * tabeli przej¶æ ma indeks 0. Dodatkowo, on jest wska¼nikiem na
-	 * to, co states. Dlatego to definitywnie musi byæ tym samym.
+	/*
+	 * We make sure if everything is OK with internal structures. i-th
+	 * W element in states is i-th row in the transition table. Also
+	 * W first state in the transition table has index 0. Moreover it is
+	 * W a pointer to what is in states.
 	 */
 	ASSERT(cur == fa->transt[sti][0]);
 
 	/*
-	 * Teraz nasze s³owo zosta³o sprawdzone w przedziale
-	 * 0..fa->nalpha. Jednak tabela przej¶æ jako pierwsz± kolumnê ma
-	 * sam stan, wiêc +1 rozwi±zuje problem.
+	 * Our word has been checked in range 0..fa->nalpha. But the
+	 * transition table as a first column has a state, so +1 solves the
+	 * t problem
 	 */
 	curnew = fa->transt[sti][word + 1];
 
 	/* 
-	 * Hm.. Czy stan nie jest aby "osamotniony" je¿eli chodzi o
-	 * przej¶cia?
+	 * Hm.. Isn't the state lonely in terms of the state transitions?
 	 */
 	if (curnew != NULL) {
 		cur->flag &= ~FA_STATE_CURR;
@@ -618,7 +516,7 @@ FA_trans(struct FA *fa, int word)
 }
 
 /*
- * Wypisz automat.
+ * Print FA
  */
 void
 FA_dump(struct FA *fa)
@@ -641,7 +539,7 @@ FA_dump(struct FA *fa)
 }
 
 /*
- * Wypisz w dot.
+ * Print in Graphviz format
  */
 void
 FA_dump_dot_fn(struct FA *fa, const char *ofname, int inc_step)
@@ -758,7 +656,7 @@ FA_dump_dot_fn(struct FA *fa, const char *ofname, int inc_step)
 }
 
 /*
- * Wypisz do pliku z rozszerzeniem dot. kroku symulacji.
+ * Output to the file with a simulation step name.
  */
 void
 FA_dump_dot(struct FA *fa, const char *ofname)
@@ -768,7 +666,7 @@ FA_dump_dot(struct FA *fa, const char *ofname)
 }
 
 /*
- * Wypisz do jednego pliku.
+ * Output to 1 file.
  */
 void
 FA_dump_dot_one(struct FA *fa, const char *ofname)
@@ -778,7 +676,7 @@ FA_dump_dot_one(struct FA *fa, const char *ofname)
 }
 
 /*
- * Restart automatu do pocz¹tkowej postaci.
+ * Restart the FA for simulation.
  */
 void
 FA_restart(struct FA *fa)
@@ -789,7 +687,7 @@ FA_restart(struct FA *fa)
 	FA_ASSERT(fa);
 
 	/*
-	 * Usuñ znacznik "stan obecny" ze wszystkich stanów.
+	 * Remove marker for current state from all states.
 	 */
 	for (i = 0; i < fa->nstates; i++) {
 		st = &fa->states[i];
@@ -797,17 +695,17 @@ FA_restart(struct FA *fa)
 		st->flag &= ~FA_STATE_CURR;
 	}
 
-	/* Zaznacz stan pierwszy jako obecny */
+	/* Mark 1st state as the current state */
 	st = &fa->states[0];
 	st->flag = FA_STATE_CURR;
 
-	/* W stanie pierwszym wygeneruj strza³kê w sposób poprawny */
+	/* In the first state generate correct arrow */
 	fa->trans_from = fa->state0;
 	fa->trans_to = st;
 }
 
 /*
- * Czy jesteœmy w stanie ostatnim?
+ * Are we in the last state?
  */
 int
 FA_final(struct FA *fa)
@@ -818,7 +716,7 @@ FA_final(struct FA *fa)
 	FA_ASSERT(fa);
 	for (i = 0; i < fa->nstates; i++) {
 		st = &fa->states[i];
-		/* Czy stan obecny jest ostatecznym? */
+		/* Is it the last state? */
 		if (st->flag & FA_STATE_LAST && st->flag & FA_STATE_CURR)
 			return (1);
 	}
