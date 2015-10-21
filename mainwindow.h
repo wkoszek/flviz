@@ -21,20 +21,15 @@ public:
 	~MainWindow();
 
 private slots:
-	/* Otwieranie pliku */
 	void buttonOPEN(void);
-        /* Otwieranie pliku */
         void buttonRESTART(void);
-	/* zmiana stanu grafu */
 	void faChange(void);
 
 protected:
-	/* Filtrowanie przyciskow */
 	bool eventFilter(QObject *obj, QEvent *ev);
 
 private:
 	Ui::MainWindow *ui;
-	/* Nasz graf oraz przyciski reprezentuj¹ce alfabet */
 	struct FA *fa;
         QPushButton **stbuttons;
         int stbuttons_num;
