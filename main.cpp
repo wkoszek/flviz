@@ -122,7 +122,7 @@ main(int argc, char **argv)
 			FA_dump_dot(fa, ofname);
 		for (;;) {
 			FA_dump(fa);
-			printf("-- Podaj indeks s³owa automatu --\n");
+			printf("-- Give word index --\n");
 			i = scanf("%d", &word);
 			if (i != 1)
 				break;
