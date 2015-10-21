@@ -20,7 +20,7 @@ FLVizGv::FLVizGv(QWidget *parent)
 	setTransformationAnchor(AnchorUnderMouse);
 	setDragMode(ScrollHandDrag);
 
-	// T³o
+	// Tlo
 	QPixmap tilePixmap(64, 64);
 	tilePixmap.fill(Qt::white);
 	QPainter tilePainter(&tilePixmap);
