@@ -110,3 +110,8 @@ indexed from 0, which I believe referred to the implementation.
 # Examples
 
 There are some example data files in the `dane` folder.
+
+# Author
+
+- Wojciech Adam Koszek, [wojciech@koszek.com](mailto:wojciech@koszek.com)
+- [http://www.koszek.com](http://www.koszek.com)
